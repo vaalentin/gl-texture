@@ -1,5 +1,5 @@
 {
-  "name": "gl-texture",
+  "name": "@vaalentin/gl-texture",
   "version": "1.0.0",
   "description": "WebGl texture wrapper.",
   "main": "index.js",
