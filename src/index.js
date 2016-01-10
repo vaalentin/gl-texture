@@ -6,7 +6,7 @@ export default class Texture {
    * @constructs Texture
    * @param {WebGLRenderingContext} gl
    * @param {uint} type
-   * @param {HTMLImageElement|Image} img
+   * @param {HTMLImageElement} src
    */
   constructor(gl, type, img) {
     this.gl = gl;
@@ -15,8 +15,11 @@ export default class Texture {
 
     this.texture = this.gl.createTexture();
 
+    if(img) {
+      this.setData(img);
+    }
+
     this.gl.bindTexture(this.type, this.texture);
-    this.gl.texImage2D(this.type, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
     this.gl.texParameteri(this.type, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
     this.gl.texParameteri(this.type, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_NEAREST);
     this.gl.generateMipmap(this.type);
@@ -38,11 +41,12 @@ export default class Texture {
   /**
    * @method setImg
    * @public
-   * @param {HTMLImageElement|HTMLVideoElement} src
+   * @param {HTMLImageElement} img
    */
-   setData(src) {
+   setImg(img) {
+     this.img = img;
      this.gl.bindTexture(this.type, this.texture);
-     this.gl.texImage2D(this.type, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, src);
+     this.gl.texImage2D(this.type, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
    }
 
   /**
@@ -52,6 +56,7 @@ export default class Texture {
   dispose() {
     this.gl.deleteTexture(this.texture);
     this.type = null;
+    this.img = null;
 
     this.gl = null;
   }

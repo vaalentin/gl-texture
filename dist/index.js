@@ -17,7 +17,7 @@ var Texture = function () {
    * @constructs Texture
    * @param {WebGLRenderingContext} gl
    * @param {uint} type
-   * @param {HTMLImageElement|Image} img
+   * @param {HTMLImageElement} src
    */
 
   function Texture(gl, type, img) {
@@ -29,8 +29,11 @@ var Texture = function () {
 
     this.texture = this.gl.createTexture();
 
+    if (img) {
+      this.setData(img);
+    }
+
     this.gl.bindTexture(this.type, this.texture);
-    this.gl.texImage2D(this.type, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
     this.gl.texParameteri(this.type, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR);
     this.gl.texParameteri(this.type, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_NEAREST);
     this.gl.generateMipmap(this.type);
@@ -57,14 +60,15 @@ var Texture = function () {
     /**
      * @method setImg
      * @public
-     * @param {HTMLImageElement|HTMLVideoElement} src
+     * @param {HTMLImageElement} img
      */
 
   }, {
-    key: "setData",
-    value: function setData(src) {
+    key: "setImg",
+    value: function setImg(img) {
+      this.img = img;
       this.gl.bindTexture(this.type, this.texture);
-      this.gl.texImage2D(this.type, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, src);
+      this.gl.texImage2D(this.type, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, img);
     }
 
     /**
@@ -77,6 +81,7 @@ var Texture = function () {
     value: function dispose() {
       this.gl.deleteTexture(this.texture);
       this.type = null;
+      this.img = null;
 
       this.gl = null;
     }
