@@ -30,7 +30,7 @@ var Texture = function () {
     this.texture = this.gl.createTexture();
 
     if (img) {
-      this.setData(img);
+      this.setImg(img);
     }
 
     this.gl.bindTexture(this.type, this.texture);
