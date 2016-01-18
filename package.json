@@ -1,7 +1,7 @@
 {
   "name": "@vaalentin/gl-texture",
-  "version": "1.0.3",
-  "description": "WebGl texture wrapper.",
+  "version": "1.0.4",
+  "description": "WebGL texture wrapper",
   "main": "dist/index.js",
   "scripts": {
     "prepublish": "npm run build",

@@ -5,17 +5,17 @@ export default class Texture {
   /**
    * @constructs Texture
    * @param {WebGLRenderingContext} gl
-   * @param {uint} type
-   * @param {HTMLImageElement} src
+   * @param {uint} [type = gl.TEXTURE_2D]
+   * @param {HTMLImageElement} img
    */
   constructor(gl, type, img) {
     this.gl = gl;
 
-    this.type = type;
+    this.type = type || gl.TEXTURE_2D;
 
     this.texture = this.gl.createTexture();
 
-    if(img) {
+    if(img != null) {
       this.setImg(img);
     }
 
