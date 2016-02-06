@@ -70,7 +70,7 @@ imageA.onload = () => {
   program.setUniform('uTextureA', unit);
 }
 
-imageA.src = 'example/powerOfTwo.jpg';
+imageA.src = 'assets/power-of-two.jpg';
 
 const imageB = document.createElement('img');
 
@@ -80,7 +80,7 @@ imageB.onload = () => {
   program.setUniform('uTextureB', unit);
 }
 
-imageB.src = 'example/nonPowerOfTwo.jpg';
+imageB.src = 'assets/non-power-of-two.jpg';
 
 let isVideoReady = false;
 const video = document.createElement('video');
@@ -96,7 +96,7 @@ video.addEventListener('ended', () => {
   video.play();
 }, true);
 
-video.src = 'example/video.mp4';
+video.src = 'assets/non-power-of-two.mp4';
 
 (function tick() {
   if(isVideoReady) {

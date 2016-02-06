@@ -2,75 +2,97 @@ import test from 'tape';
 import getGl from '@vaalentin/gl-context';
 import Texture from '../src';
 
-const imageUrl = 'http://www.uvmapper.com/help/checker_large.gif';
-const canvas = document.createElement('canvas');
-const gl = getGl(canvas);
+function loadImage(src) {
+  return new Promise((res, rej) => {
+    const image = document.createElement('img');
+    image.onload = res.bind(res, image);
+    image.onerror = rej;
+    image.src = src;
+  });
+}
 
-test('should be instanciable', t => {
-  t.plan(1);
+Promise.all([
+  loadImage('assets/non-power-of-two.jpg'),
+  loadImage('assets/power-of-two.jpg')
+]).then(imgs => {
+  const [nonPowerOfTwoImg, powerOfTwoImg] = imgs;
 
-  const texture = new Texture(gl, gl.TEXTURE_2D);
+  const canvas = document.createElement('canvas');
+  const gl = getGl(canvas);
 
-  t.ok(texture instanceof Texture, 'instance of Texture');
-});
+  test('should be instanciable', t => {
+    t.plan(1);
 
-test('should accept no size and no data', t => {
-  t.plan(3);
+    const texture = new Texture(gl, gl.TEXTURE_2D);
 
-  const texture = new Texture(gl, gl.TEXTURE_2D);
+    t.ok(texture instanceof Texture, 'instance of Texture');
+  });
 
-  t.equal(texture.width, 1, 'width is 1');
-  t.equal(texture.height, 1, 'height is 1');
-  t.equal(texture.data, null, 'data is null');
-});
+  test('should accept no size and no data', t => {
+    t.plan(3);
 
-test('should accept size and no data', t => {
-  t.plan(3);
+    const texture = new Texture(gl, gl.TEXTURE_2D);
 
-  const texture = new Texture(gl, gl.TEXTURE_2D, 1024, 512);
+    t.equal(texture.width, 1, 'width is 1');
+    t.equal(texture.height, 1, 'height is 1');
+    t.equal(texture.data, null, 'data is null');
+  });
 
-  t.equal(texture.width, 1024, 'width is 1024');
-  t.equal(texture.height, 512, 'height is 512');
-  t.equal(texture.data, null, 'data is null');
-});
+  test('should accept size and no data', t => {
+    t.plan(3);
 
-test('should accept data', t => {
-  t.plan(3);
-  t.timeoutAfter(5000);
+    const texture = new Texture(gl, gl.TEXTURE_2D, 1024, 512);
 
-  const data = document.createElement('img');
+    t.equal(texture.width, 1024, 'width is 1024');
+    t.equal(texture.height, 512, 'height is 512');
+    t.equal(texture.data, null, 'data is null');
+  });
 
-  data.onload = () => {
-    const texture = new Texture(gl, gl.TEXTURE_2D, data);
+  test('should accept power of two data', t => {
+    t.plan(3);
+    t.timeoutAfter(5000);
 
-    t.equal(texture.width, data.width, `width is ${data.width}`);
-    t.equal(texture.height, data.height, `height is ${data.height}`);
-    t.equal(texture.data, data, 'data ok');
-  }
+    const texture = new Texture(gl, gl.TEXTURE_2D, powerOfTwoImg);
 
-  data.src = imageUrl;
-});
+    t.equal(texture.width, powerOfTwoImg.width, `width is ${powerOfTwoImg.width}`);
+    t.equal(texture.height, powerOfTwoImg.height, `height is ${powerOfTwoImg.height}`);
+    t.equal(texture.data, powerOfTwoImg, 'data ok');
+  });
 
-test('should expose the WebGLTexture object', t => {
-  t.plan(1);
+  test('should accept non power of two data', t => {
+    t.plan(3);
+    t.timeoutAfter(5000);
 
-  const texture = new Texture(gl, gl.TEXTURE_2D);
+    const texture = new Texture(gl, gl.TEXTURE_2D, nonPowerOfTwoImg);
 
-  t.ok(texture.texture instanceof WebGLTexture, 'instance of WebGLTexture');
-});
+    t.equal(texture.width, nonPowerOfTwoImg.width, `width is ${nonPowerOfTwoImg.width}`);
+    t.equal(texture.height, nonPowerOfTwoImg.height, `height is ${nonPowerOfTwoImg.height}`);
+    t.equal(texture.data, nonPowerOfTwoImg, 'data ok');
+  });
 
-test('bind should bind the texture to the unit provided', t => {
-  t.plan(4);
+  test('should expose the WebGLTexture object', t => {
+    t.plan(1);
 
-  const textureA = new Texture(gl, gl.TEXTURE_2D);
-  const textureB = new Texture(gl, gl.TEXTURE_2D);
+    const texture = new Texture(gl, gl.TEXTURE_2D);
 
-  textureA.bind(0);
-  t.equal(gl.getParameter(gl.ACTIVE_TEXTURE), 0);
-  t.equal(gl.getParameter(gl.TEXTURE_BINDING_2D), textureA);
-  
-  textureB.bind(2);
-  t.equal(gl.getParameter(gl.ACTIVE_TEXTURE), 2);
-  t.equal(gl.getParameter(gl.TEXTURE_BINDING_2D), textureB);
+    t.ok(texture.texture instanceof WebGLTexture, 'instance of WebGLTexture');
+  });
+
+  test('bind should bind the texture to the unit provided', t => {
+    t.plan(4);
+
+    const textureA = new Texture(gl, gl.TEXTURE_2D);
+    const textureB = new Texture(gl, gl.TEXTURE_2D);
+
+    textureA.bind(0);
+    t.equal(gl.getParameter(gl.ACTIVE_TEXTURE), gl.TEXTURE0);
+    t.equal(gl.getParameter(gl.TEXTURE_BINDING_2D), textureA.texture);
+
+    textureB.bind(2);
+    t.equal(gl.getParameter(gl.ACTIVE_TEXTURE), gl.TEXTURE2);
+    t.equal(gl.getParameter(gl.TEXTURE_BINDING_2D), textureB.texture);
+  });
+
+  test.onFinish(() => window.close());
 });
 
