@@ -38,6 +38,10 @@ export default class Texture {
   }
 
   setData(data) {
+    if(!this.checkData(data)) {
+      return this.setEmptyData(this.width, this.height);
+    }
+
     this.width = data.width;
     this.height = data.height;
     this.data = data;
@@ -60,6 +64,11 @@ export default class Texture {
     this.gl.activeTexture(this.gl.TEXTURE0 + unit);
     this.gl.bindTexture(this.type, this.texture);
     return unit;
+  }
+
+  dispose() {
+    this.gl.deleteTexture(this.texture);
+    this.texture = null;
   }
 }
 

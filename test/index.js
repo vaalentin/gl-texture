@@ -78,19 +78,28 @@ Promise.all([
     t.ok(texture.texture instanceof WebGLTexture, 'instance of WebGLTexture');
   });
 
-  test('bind should bind the texture to the unit provided', t => {
+  test('should bind the texture to the unit provided', t => {
     t.plan(4);
 
     const textureA = new Texture(gl, gl.TEXTURE_2D);
     const textureB = new Texture(gl, gl.TEXTURE_2D);
 
     textureA.bind(0);
-    t.equal(gl.getParameter(gl.ACTIVE_TEXTURE), gl.TEXTURE0);
-    t.equal(gl.getParameter(gl.TEXTURE_BINDING_2D), textureA.texture);
+    t.equal(gl.getParameter(gl.ACTIVE_TEXTURE), gl.TEXTURE0, 'active texture is 0');
+    t.equal(gl.getParameter(gl.TEXTURE_BINDING_2D), textureA.texture, 'binded texture ok');
 
     textureB.bind(2);
-    t.equal(gl.getParameter(gl.ACTIVE_TEXTURE), gl.TEXTURE2);
-    t.equal(gl.getParameter(gl.TEXTURE_BINDING_2D), textureB.texture);
+    t.equal(gl.getParameter(gl.ACTIVE_TEXTURE), gl.TEXTURE2, 'active texture is 2');
+    t.equal(gl.getParameter(gl.TEXTURE_BINDING_2D), textureB.texture, 'binded texture ok');
+  });
+
+  test('should delete the texture when disposed', t => {
+    t.plan(1);
+
+    const texture = new Texture(gl, gl.TEXTURE_2D);
+    texture.dispose();
+
+    t.equal(texture.texture, null, 'texture is null');
   });
 
   test.onFinish(() => window.close());
