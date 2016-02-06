@@ -1,6 +1,20 @@
 import { isPOT } from 'math-utils';
 
+/**
+ * @class Texture
+ */
 export default class Texture {
+  /**
+   * 3 constructors:
+   * (gl, type) creates a 1x1 empty texture.
+   * (gl, type, width, height) creates a widthxheight empty texture.
+   * (gl, type, data) creates a texture with data
+   *
+   * @constructs Texture
+   * @param {WebGLRenderingContext} gl
+   * @param {uint} type
+   * @param {...any} args
+   */
   constructor(gl, type, ...args) {
     this.gl = gl;
     this.type = type;
@@ -21,12 +35,24 @@ export default class Texture {
     this.gl.bindTexture(this.type, null);
   }
 
+  /**
+   * @method checkData
+   * @private
+   * @param {any} data
+   * @returns {boolean}
+   */
   checkData(data) {
     return data instanceof HTMLImageElement
       || data instanceof HTMLVideoElement
       || data instanceof HTMLCanvasElement;
   }
 
+  /**
+   * @method setEmptyData
+   * @public
+   * @param {uint} width
+   * @param {uint} height
+   */
   setEmptyData(width, height) {
     this.width = width;
     this.height = height;
@@ -37,6 +63,11 @@ export default class Texture {
     this.gl.texParameteri(this.type, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR);
   }
 
+  /**
+   * @method setData
+   * @public
+   * @param {HTMLImageElement|HTMLVideoElement|HTMLCanvasElement} data
+   */
   setData(data) {
     if(!this.checkData(data)) {
       return this.setEmptyData(this.width, this.height);
@@ -60,12 +91,22 @@ export default class Texture {
     }
   }
 
+  /**
+   * @method bind
+   * @public
+   * @param {uint} unit
+   * @returns {uint}
+   */
   bind(unit) {
     this.gl.activeTexture(this.gl.TEXTURE0 + unit);
     this.gl.bindTexture(this.type, this.texture);
     return unit;
   }
 
+  /**
+   * @method dispose
+   * @public
+   */
   dispose() {
     this.gl.deleteTexture(this.texture);
     this.texture = null;

@@ -1,7 +1,7 @@
 {
   "name": "@vaalentin/gl-texture",
   "version": "1.0.4",
-  "description": "WebGL texture wrapper",
+  "description": "WebGL texture wrapper.",
   "main": "dist/index.js",
   "scripts": {
     "start": "budo example/index.js --live -- -t babelify",
